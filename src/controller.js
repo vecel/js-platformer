@@ -1,4 +1,4 @@
-export class Controller {
+class Controller {
 
     constructor() {
 
@@ -10,11 +10,11 @@ export class Controller {
 
     keyDownUp(type, keyCode) {
 
-        let down = (type == 'keydown') ? true : false;
+        const down = (type === 'keydown') ? true : false;
 
         switch (keyCode) {
             case 65:
-            case 37: 
+            case 37:
                 this.left.getInput(down); break;
             case 68:
             case 39:
@@ -22,19 +22,28 @@ export class Controller {
             case 87:
             case 38:
                 this.up.getInput(down); break;
+            default:
+                break;
         }
+
     }
 
-    
+
 }
 
 Controller.ButtonInput = class {
     constructor() {
+
         this.active = this.down = false;
+
     }
 
     getInput(down) {
-        if (this.down != down) this.active = down;
+
+        if (this.down !== down) this.active = down;
         this.down = down;
+
     }
-}
+};
+
+export default Controller;

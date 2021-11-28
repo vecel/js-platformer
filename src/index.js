@@ -1,22 +1,22 @@
-import { Display } from "./display";
-import { Controller } from "./controller";
+/* eslint-disable */
+
+import Display from './display';
+import Controller from './controller';
 
 window.addEventListener('load', (event) => {
 
-    'use strict'
-
-    let keyDownUp = function(event) {
+    const keyDownUp = function (event) {
 
         controller.keyDownUp(event.type, event.keyCode);
 
-    }
+    };
 
-    let update = function() {
+    const update = function () {
 
-        if (controller.left.active) console.log("left");
-        if (controller.right.active) console.log("right");
+        // if (controller.left.active) console.log("left");
+        // if (controller.right.active) console.log("right");
 
-    }
+    };
 
 
 
@@ -24,9 +24,9 @@ window.addEventListener('load', (event) => {
 
     let display    = new Display(document.querySelector('canvas'));
 
-    //let game       = new Game();
+    // let game       = new Game();
 
-    //let engine     = new Engine();
+    // let engine     = new Engine();
 
 
     window.addEventListener('keydown', keyDownUp);

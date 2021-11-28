@@ -19,6 +19,7 @@
         "no-multi-assign": "off",
         "no-unneeded-ternary": "off",
         "no-use-before-define": "warn",
-        "func-names": "off"
+        "func-names": "off",
+        "comma-dangle": ["error", { "functions": "never" }]
     }
 }

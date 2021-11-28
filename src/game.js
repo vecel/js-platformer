@@ -16,7 +16,7 @@ class Game {
                 if (object.x < 0) { object.x = 0; object.velocityX = 0; }
                 if (object.x + object.width > this.width) { object.x = this.width - object.width; object.velocityX = 0; }
                 if (object.y < 0) { object.y = 0; object.velocityY = 0; }
-                if (object.y + object.height > this.height) { object.jumping = false; object.y = this.height - object.height; object.velocityY = 0; }
+                if (object.y + object.height > this.height) { object.jumpCounter = 0; object.y = this.height - object.height; object.velocityY = 0; }
                 
             },
 
@@ -43,23 +43,23 @@ class Game {
 Game.Player = class {
     constructor() {
 
-        this.color      = '#f00';
-        this.height     = 16;
-        this.width      = 16;
-        this.jumping    = true;
-        this.velocityX  = 0;
-        this.velocityY  = 0;
-        this.x          = 50;
-        this.y          = 100;
+        this.color       = '#f00';
+        this.height      = 16;
+        this.width       = 16;
+        this.jumpCounter = 0;
+        this.velocityX   = 0;
+        this.velocityY   = 0;
+        this.x           = 50;
+        this.y           = 100;
 
     }
 
     jump() {
 
-        if (this.jumping) return;
+        if (this.jumpCounter == 2) return;
 
-        this.velocityY -= 20;
-        this.jumping = true;
+        this.velocityY = -15;
+        this.jumpCounter++;
 
     }
 

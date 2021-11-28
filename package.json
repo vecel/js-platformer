@@ -1,0 +1,25 @@
+{
+  "name": "js-platformer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vecel/js-platformer.git"
+  },
+  "author": "Mateusz Karandys",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vecel/js-platformer/issues"
+  },
+  "homepage": "https://github.com/vecel/js-platformer#readme",
+  "devDependencies": {
+    "eslint": "^8.3.0",
+    "webpack": "^5.64.4",
+    "webpack-cli": "^4.9.1"
+  }
+}

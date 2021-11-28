@@ -1,0 +1,24 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "airbnb-base"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 13,
+        "sourceType": "module"
+    },
+    "rules": {
+        "indent": "off",
+        "no-multi-spaces": "off",
+        "no-multiple-empty-lines": "off",
+        "max-classes-per-file": "off",
+        "padded-blocks": ["error", { "blocks": "always" }],
+        "no-multi-assign": "off",
+        "no-unneeded-ternary": "off",
+        "no-use-before-define": "warn",
+        "func-names": "off"
+    }
+}

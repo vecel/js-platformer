@@ -20,6 +20,7 @@
         "no-unneeded-ternary": "off",
         "no-use-before-define": "warn",
         "func-names": "off",
-        "comma-dangle": ["error", { "functions": "never" }]
+        "comma-dangle": ["error", { "functions": "never" }],
+        "no-plusplus": ["error", { "allowForLoopsAfterthoughts": "true" }]
     }
 }

@@ -16,24 +16,26 @@ window.addEventListener('load', (event) => {
     const resize = function () {
 
         display.resize(document.documentElement.clientWidth - 32, document.documentElement.clientHeight - 32, 
-            game.world.height / game.world.width);
+            game.level.height / game.level.width);
         display.render();
 
     };
 
     const render = function () {
 
-        display.fill(game.world.backgroundColor);
-        display.drawRectangle(game.world.player.x, game.world.player.y, game.world.player.width, game.world.player.height, game.world.player.color);
+        display.fill(game.level.backgroundColor);
+        display.drawMap(game.level.world.map, 5, 8, game.level.world.offsetX, game.level.world.offsetY);
+        display.drawRectangle(game.level.player.x, game.level.player.y, game.level.player.width, game.level.player.height, game.level.player.color);
+        
         display.render();
 
     }
 
     const update = function () {
 
-        if (controller.left.active)  { game.world.player.moveLeft(); }
-        if (controller.right.active) { game.world.player.moveRight(); }
-        if (controller.up.active)    { game.world.player.jump(); controller.up.active = false; }
+        if (controller.left.active)  { game.level.player.moveLeft(); }
+        if (controller.right.active) { game.level.player.moveRight(); }
+        if (controller.up.active)    { game.level.player.jump(); controller.up.active = false; }
 
         game.update();
 
@@ -51,8 +53,8 @@ window.addEventListener('load', (event) => {
 
     let engine     = new Engine(1000 / 30, update, render);
 
-    display.buffer.canvas.width = game.world.width;
-    display.buffer.canvas.height = game.world.height;
+    display.buffer.canvas.width = game.level.width;
+    display.buffer.canvas.height = game.level.height;
 
     window.addEventListener('keydown', keyDownUp);
     window.addEventListener('keyup',   keyDownUp);

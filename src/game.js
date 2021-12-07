@@ -22,7 +22,6 @@ class Game {
                      * rendered in solid color, but it has stripes in different color
                      */
                     this.world.moveHorizontally(Math.round(-object.velocityX));
-
                     object.velocityX = 0;
                 }
                 if (object.x + object.width > this.width) { 
@@ -49,6 +48,8 @@ class Game {
                 this.player.velocityY += this.world.gravity;
                 this.player.velocityX *= this.world.friction;
                 this.player.update();
+
+                this.world.update();
 
                 this.collideObject(this.player);
 
@@ -112,11 +113,17 @@ Game.Player = class {
 Game.World = class {
     constructor(levelId) {
 
-        this.map = ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X',
+        this.mapSketch = ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X',
                     'X', '.', '.', '.', 'X', '.', '.', 'X',
                     '.', '.', '.', 'X', '.', '.', '.', 'X',
                     'X', '.', '.', '.', 'X', 'X', '.', 'X',
                     'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'];
+        
+        this.columns    = 8;
+        this.tileWidth  = 16;
+        this.tileHeight = 16;
+
+        this.map = [];
 
         this.gravity = 3;
         this.friction = 0.7;
@@ -126,9 +133,20 @@ Game.World = class {
 
     }
 
+    initMap(columns, tileWidth, tileHeight) {
+
+        for (let i = 0; i <= this.mapSketch.length; ++i) {
+            if (this.mapSketch[i] === 'X')
+                this.map.push(new Game.Tile((i % columns) * tileWidth, Math.floor(i / columns) * tileHeight, this.mapSketch[i]));
+        }
+        console.log(this.map);
+
+    }
+
     moveHorizontally(offset) {
 
         this.offsetX += offset;
+        console.log(this.offsetX);
 
     }
 
@@ -137,7 +155,26 @@ Game.World = class {
         this.offsetY += offset;
 
     }
+
+    update() {
+        this.map.forEach(tile => {
+            tile.offsetX = this.offsetX;
+            tile.offsetY = this.offsetY;
+        })
+    }
     
+}
+
+Game.Tile = class {
+    constructor(x, y, id) {
+
+        this.x  = x;
+        this.y  = y;
+        this.id = id;
+
+        this.offsetX = 0;
+        this.offsetY = 0;
+    }
 }
 
 export default Game;

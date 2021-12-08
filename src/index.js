@@ -24,10 +24,10 @@ window.addEventListener('load', (event) => {
     const render = function () {
 
         display.fill(game.level.backgroundColor);
-        // jakos ladniej to ogarnac
+        
         game.level.world.map.forEach(tile => {
 
-            display.drawTile(tile.x + tile.offsetX, tile.y + tile.offsetY, game.level.world.tileWidth, game.level.world.tileHeight, tile.id);
+            display.drawTile(tile.x + game.level.world.offsetX, tile.y + game.level.world.offsetY, tile.width, tile.height, tile.id);
 
         });
         display.drawPlayer(game.level.player.x, game.level.player.y, game.level.player.width, game.level.player.height, game.level.player.color);

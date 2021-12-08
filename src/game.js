@@ -55,8 +55,6 @@ class Game {
                 this.player.velocityX *= this.world.friction;
                 this.player.update();
 
-                this.world.update();
-
                 this.collideObject(this.player);
 
             }
@@ -77,19 +75,29 @@ class Game {
     }
 }
 
-Game.Player = class {
+Game.Rectangle = class {
+    constructor(x, y, width, height) {
+
+        this.x      = x;
+        this.y      = y;
+        this.width  = width;
+        this.height = height;
+        this.oldX   = x;
+        this.oldY   = y;
+
+    } 
+}
+
+Game.Player = class extends Game.Rectangle {
     constructor() {
+        super(50, 100, 16, 16); // initial player values
 
         this.color       = '#f00';
-        this.height      = 16;
-        this.width       = 16;
         this.VELOCITY    = 3;
 
         this.jumpCounter = 0;
         this.velocityX   = 0;
         this.velocityY   = 0;
-        this.x           = 50;
-        this.y           = 100;
 
     }
 
@@ -155,7 +163,7 @@ Game.World = class {
 
         for (let i = 0; i <= this.mapSketch.length; ++i) {
             if (this.mapSketch[i] === 'X')
-                this.map.push(new Game.Tile((i % columns) * tileWidth, Math.floor(i / columns) * tileHeight, this.mapSketch[i]));
+                this.map.push(new Game.Tile((i % columns) * tileWidth, Math.floor(i / columns) * tileHeight, tileWidth, tileHeight, this.mapSketch[i]));
         }
         console.log(this.map);
 
@@ -173,25 +181,15 @@ Game.World = class {
         this.offsetY += offset;
 
     }
-
-    update() {
-        this.map.forEach(tile => {
-            tile.offsetX = this.offsetX;
-            tile.offsetY = this.offsetY;
-        })
-    }
     
 }
 
-Game.Tile = class {
-    constructor(x, y, id) {
-
-        this.x  = x;
-        this.y  = y;
+Game.Tile = class extends Game.Rectangle {
+    constructor(x, y, width, height, id) {
+        super(x, y, width, height);
+    
         this.id = id;
 
-        this.offsetX = 0;
-        this.offsetY = 0;
     }
 }
 

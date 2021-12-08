@@ -43,6 +43,12 @@ class Game {
                 
             },
 
+            init: function () {
+
+                this.world.init();
+
+            },
+
             update: function () {
 
                 this.player.velocityY += this.world.gravity;
@@ -55,6 +61,12 @@ class Game {
 
             }
         }
+
+    }
+
+    init() {
+
+        this.level.init();
 
     }
 
@@ -130,6 +142,12 @@ Game.World = class {
 
         this.offsetX = 0;
         this.offsetY = 0;
+
+    }
+
+    init() {
+
+        this.initMap(this.columns, this.tileWidth, this.tileHeight);
 
     }
 

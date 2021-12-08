@@ -6,7 +6,7 @@ class Display {
 
     }
 
-    drawRectangle(x, y, width, height, color) {
+    drawPlayer(x, y, width, height, color) {
 
         this.buffer.fillStyle = color;
         this.buffer.fillRect(Math.round(x), Math.round(y), width, height);
@@ -17,13 +17,6 @@ class Display {
 
         this.buffer.fillStyle = '#f0f';
         this.buffer.fillRect(x, y, width, height);        
-
-    }
-
-    drawMap() {
-
-        this.buffer.fillStyle = '#f0f';
-        // for (let t of tiles) this.drawTile(t.x, t.y, t.width, t.height, t.id);
 
     }
 

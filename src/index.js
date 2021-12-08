@@ -26,9 +26,11 @@ window.addEventListener('load', (event) => {
         display.fill(game.level.backgroundColor);
         // jakos ladniej to ogarnac
         game.level.world.map.forEach(tile => {
+
             display.drawTile(tile.x + tile.offsetX, tile.y + tile.offsetY, game.level.world.tileWidth, game.level.world.tileHeight, tile.id);
+
         });
-        display.drawRectangle(game.level.player.x, game.level.player.y, game.level.player.width, game.level.player.height, game.level.player.color);
+        display.drawPlayer(game.level.player.x, game.level.player.y, game.level.player.width, game.level.player.height, game.level.player.color);
         
         display.render();
 
@@ -64,7 +66,8 @@ window.addEventListener('load', (event) => {
     window.addEventListener('resize',  resize);
 
     resize();
-    game.level.world.initMap(game.level.world.columns, game.level.world.tileWidth, game.level.world.tileHeight);
+
+    game.init();
     engine.start();
 
 });

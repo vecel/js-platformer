@@ -30,7 +30,7 @@ window.addEventListener('load', (event) => {
             display.drawTile(tile.x + game.level.world.offsetX, tile.y + game.level.world.offsetY, tile.width, tile.height, tile.id);
 
         });
-        display.drawPlayer(game.level.player.x, game.level.player.y, game.level.player.width, game.level.player.height, game.level.player.color);
+        display.drawPlayer(game.level.world.player.x, game.level.world.player.y, game.level.world.player.width, game.level.world.player.height, game.level.world.player.color);
         
         display.render();
 
@@ -38,9 +38,9 @@ window.addEventListener('load', (event) => {
 
     const update = function () {
 
-        if (controller.left.active)  { game.level.player.moveLeft(); }
-        if (controller.right.active) { game.level.player.moveRight(); }
-        if (controller.up.active)    { game.level.player.jump(); controller.up.active = false; }
+        if (controller.left.active)  { game.level.world.player.moveLeft(); }
+        if (controller.right.active) { game.level.world.player.moveRight(); }
+        if (controller.up.active)    { game.level.world.player.jump(); controller.up.active = false; }
 
         game.update();
 

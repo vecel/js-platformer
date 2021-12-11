@@ -43,6 +43,7 @@ class Engine {
          * In function below I bind 'this' to handleRun method, because passing only this.handleRun
          * doesn't keep this as Engine class
         */
+       
         this.animationFrameRequest = window.requestAnimationFrame(this.handleRun.bind(this));
 
     }

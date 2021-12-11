@@ -1,5 +1,4 @@
-/* eslint-disable */
-// import Game.Collider from 'collider.js';
+
 
 class Game {
     constructor() {
@@ -11,39 +10,6 @@ class Game {
             width: 128,
 
             world: new Game.World(),
-            // player: new Game.Player(),
-
-            collideObject: function (object) {
-
-                if (object.x < 0) { 
-                    object.x = 0;
-                    
-                    /**
-                     * objects's velocityX is rounded so that tile map is moving smoothly,
-                     * otherwise tiles move by nondecimal values and then graphics isn't
-                     * rendered in solid color, but it has stripes in different color
-                     */
-                    this.world.moveHorizontally(Math.round(-object.velocityX));
-                    object.velocityX = 0;
-                }
-                if (object.x + object.width > this.width) { 
-                    object.x = this.width - object.width;
-                    this.world.moveHorizontally(Math.round(-object.velocityX));
-                    object.velocityX = 0;
-                }
-                if (object.y < 0) { 
-                    object.y = 0;
-                    this.world.moveVertically(object.velocityY);
-                    object.velocityY = 0;
-                }
-                if (object.y + object.height > this.height) { 
-                    object.y = this.height - object.height;
-                    // this.world.moveVertically(-object.velocityY);
-                    object.jumpCounter = 0; 
-                    object.velocityY = 0;
-                }
-                
-            },
 
             init: function () {
 
@@ -53,15 +19,10 @@ class Game {
 
             update: function () {
 
-                // this.collideObject(this.player);
-                // this.collider.collideWithBoundries(this.player);
-                // this.world.moveHorizontally(this.collider.getOffsetX);
-                // this.world.moveVertically(this.collider.getOffsetY);
                 this.world.update();
 
             }
         }
-
     }
 
     init() {
@@ -105,7 +66,7 @@ Game.Player = class extends Game.Rectangle {
         super(50, 100, 16, 16); // initial player values
 
         this.color       = '#f00';
-        this.VELOCITY    = 3;
+        this.velocity    = 3;
 
         this.jumpCounter = 0;
         this.velocityX   = 0;
@@ -124,13 +85,13 @@ Game.Player = class extends Game.Rectangle {
 
     moveLeft() {
 
-        this.velocityX = -this.VELOCITY;
+        this.velocityX = -this.velocity;
 
     }
 
     moveRight() {
 
-        this.velocityX = this.VELOCITY;
+        this.velocityX = this.velocity;
 
     }
 
@@ -161,8 +122,7 @@ Game.World = class {
         
         this.columns    = 8;
         this.rows       = 5;
-        this.tileWidth  = 16;
-        this.tileHeight = 16;
+        this.tileSize  = 16;
 
         this.map = [];
 
@@ -174,22 +134,22 @@ Game.World = class {
         this.offsetX = 0;
         this.offsetY = 0;
 
-        this.width  = this.columns * this.tileWidth;
-        this.height = this.rows * this.tileHeight;
+        this.width  = this.columns * this.tileSize;
+        this.height = this.rows * this.tileSize;
 
     }
 
     init() {
 
-        this.initMap(this.columns, this.tileWidth, this.tileHeight);
+        this.initMap();
 
     }
 
-    initMap(columns, tileWidth, tileHeight) {
+    initMap() {
 
         for (let i = 0; i <= this.mapSketch.length; ++i) {
             if (this.mapSketch[i] === 'X')
-                this.map.push(new Game.Tile((i % columns) * tileWidth, Math.floor(i / columns) * tileHeight, tileWidth, tileHeight, this.mapSketch[i]));
+                this.map.push(new Game.Tile((i % this.columns) * this.tileSize, Math.floor(i / this.columns) * this.tileSize, this.tileSize, this.tileSize, this.mapSketch[i]));
         }
         console.log(this.map);
 
@@ -197,35 +157,39 @@ Game.World = class {
 
     collideObject(object) {
 
-        if (object.getLeft() < 8) { 
-
-            object.setLeft(8);
-            
-            /**
+        /**
              * object's velocityX is rounded so that tile map is moving smoothly,
              * otherwise tiles move by nondecimal values and then graphics isn't
              * rendered in solid color, but it has stripes in different color
-             */
+        */
+
+        if (object.getLeft() < 8) { 
+
             this.offsetX += Math.round(-object.velocityX);
+            object.setLeft(8);
             object.velocityX = 0;
 
         }
         if (object.getRight() > this.width - 8) { 
 
-            object.setRight(this.width - 8);
             this.offsetX += Math.round(-object.velocityX);
+            object.setRight(this.width - 8);
             object.velocityX = 0;
 
         }
         if (object.getTop() < 8) { 
-            object.setTop(8);
+        
             this.offsetY += Math.round(-object.velocityY);
+            object.setTop(8);
             object.velocityY = 0;
+
         }
         if (object.getBottom() > this.height - 8) { 
+            
             object.setBottom(this.height - 8);
             object.jumpCounter = 0; 
             object.velocityY = 0;
+
         }
 
     }
@@ -260,7 +224,7 @@ Game.World.Collider = class {
 
     collide(object) {
 
-
+        
 
     }
 

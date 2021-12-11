@@ -30,6 +30,7 @@ window.addEventListener('load', (event) => {
             display.drawTile(tile.x + game.level.world.offsetX, tile.y + game.level.world.offsetY, tile.width, tile.height, tile.id);
 
         });
+        
         display.drawPlayer(game.level.world.player.x, game.level.world.player.y, game.level.world.player.width, game.level.world.player.height, game.level.world.player.color);
         
         display.render();

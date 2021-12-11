@@ -62,8 +62,4 @@ class Display {
     }
 }
 
-// Display.TileSheet = class {
-
-// }
-
 export default Display;

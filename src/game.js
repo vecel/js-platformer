@@ -59,11 +59,21 @@ Game.Rectangle = class {
     getRight()  { return this.x + this.width; }
     getTop()    { return this.y; }
     getBottom() { return this.y + this.height; }
+
+    setOldLeft(x)   { this.oldX = x; }
+    setOldRight(x)  { this.oldX = x - this.width; }
+    setOldTop(y)    { this.oldY = y; }
+    setOldBottom(y) { this.oldY = y - this.height; }
+
+    getOldLeft()   { return this.oldX; }
+    getOldRight()  { return this.oldX + this.width; }
+    getOldTop()    { return this.oldY; }
+    getOldBottom() { return this.oldY + this.height; }
 }
 
 Game.Player = class extends Game.Rectangle {
     constructor() {
-        super(50, 100, 16, 16); // initial player values
+        super(32, 32, 16, 16); // initial player values
 
         this.color       = '#f00';
         this.velocity    = 3;
@@ -97,6 +107,9 @@ Game.Player = class extends Game.Rectangle {
 
     update() {
 
+        this.oldX = this.x;
+        this.oldY = this.y;
+
         this.x += this.velocityX;
         this.y += this.velocityY;
 
@@ -113,9 +126,9 @@ Game.World = class {
                     'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'];
 
         this.collisionMap = [1, 1, 1, 1, 1, 1, 1, 1,
-                            1, 1, 1, 1, 1, 1, 1, 1,
-                            1, 1, 0, 0, 0, 0, 0, 0,
-                            1, 0, 0, 0, 0, 0, 0, 0,
+                            1, 0, 0, 0, 1, 0, 0, 1,
+                            0, 0, 0, 1, 0, 0, 0, 1,
+                            1, 0, 0, 0, 1, 1, 0, 1,
                             1, 1, 1, 1, 1, 1, 1, 1];
 
         this.collider = new Game.World.Collider();
@@ -151,7 +164,6 @@ Game.World = class {
             if (this.mapSketch[i] === 'X')
                 this.map.push(new Game.Tile((i % this.columns) * this.tileSize, Math.floor(i / this.columns) * this.tileSize, this.tileSize, this.tileSize, this.mapSketch[i]));
         }
-        console.log(this.map);
 
     }
 
@@ -163,34 +175,63 @@ Game.World = class {
              * rendered in solid color, but it has stripes in different color
         */
 
-        if (object.getLeft() < 8) { 
+        if (object.getLeft() < 0) { 
 
             this.offsetX += Math.round(-object.velocityX);
-            object.setLeft(8);
+            object.setLeft(0);
             object.velocityX = 0;
 
         }
-        if (object.getRight() > this.width - 8) { 
+        if (object.getRight() > this.width) { 
 
             this.offsetX += Math.round(-object.velocityX);
-            object.setRight(this.width - 8);
+            object.setRight(this.width);
             object.velocityX = 0;
 
         }
-        if (object.getTop() < 8) { 
+        if (object.getTop() < 0) { 
         
             this.offsetY += Math.round(-object.velocityY);
-            object.setTop(8);
+            object.setTop(0);
             object.velocityY = 0;
 
         }
-        if (object.getBottom() > this.height - 8) { 
+        if (object.getBottom() > this.height - 0) { 
             
-            object.setBottom(this.height - 8);
+            object.setBottom(this.height - 0.01);
             object.jumpCounter = 0; 
             object.velocityY = 0;
 
         }
+
+        /**
+         * left, right, top, bottom are computed correctly
+         */
+        let left, right, top, bottom, collisionValue;
+
+        left            = Math.floor((object.getLeft() - this.offsetX) / this.tileSize);
+        top             = Math.floor((object.getTop() - this.offsetY) / this.tileSize);
+        collisionValue  = this.collisionMap[top * this.columns + left];
+
+        // this.collider.collide(collisionValue, object, left * this.tileSize + this.offsetX, top * this.tileSize + this.offsetY, this.tileSize);
+
+        right           = Math.floor((object.getRight() - this.offsetX) / this.tileSize);
+        top             = Math.floor((object.getTop() - this.offsetY) / this.tileSize);
+        collisionValue  = this.collisionMap[top * this.columns + right];
+
+        // this.collider.collide(collisionValue, object, right * this.tileSize + this.offsetX, top * this.tileSize + this.offsetY, this.tileSize);
+
+        left            = Math.floor((object.getLeft() - this.offsetX) / this.tileSize);
+        bottom          = Math.floor((object.getBottom() - this.offsetY) / this.tileSize);
+        collisionValue  = this.collisionMap[bottom * this.columns + left];
+
+        // this.collider.collide(collisionValue, object, left * this.tileSize + this.offsetX, (bottom - 1) * this.tileSize + this.offsetY, this.tileSize);
+
+        right           = Math.floor((object.getRight() - this.offsetX) / this.tileSize);
+        bottom          = Math.floor((object.getBottom() - this.offsetY) / this.tileSize);
+        collisionValue  = this.collisionMap[bottom * this.columns + right];
+
+        // this.collider.collide(collisionValue, object, right * this.tileSize + this.offsetX, (bottom - 1) * this.tileSize + this.offsetY, this.tileSize);
 
     }
 
@@ -222,9 +263,85 @@ Game.World.Collider = class {
 
     }
 
-    collide(object) {
+    collide(collisionValue, object, tileX, tileY, tileSize) {
 
-        
+        switch (collisionValue) {
+
+            case 1: if (this.collidePlatformTop(object, tileY)) return;
+                    if (this.collidePlatformLeft(object, tileX)) return;
+                    if (this.collidePlatformRight(object, tileX + tileSize)) return;
+                    this.collidePlatformBottom(object, tileY + tileSize); break;
+
+        }
+
+    }
+
+    collidePlatformLeft(object, tileLeft) {
+
+        if (object.getRight() > tileLeft && object.getOldLeft() <= tileLeft) {
+
+            // console.log('collide platform left');
+
+            object.setRight(tileLeft - 0.01);
+            object.velocityX = 0;
+            
+            return true;
+
+        }
+
+        return false;
+
+    }
+
+    collidePlatformRight(object, tileRight) {
+
+        if (object.getLeft() < tileRight && object.getOldRight() >= tileRight) {
+
+            // console.log('collide platform right');
+
+            object.setLeft(tileRight + 0.01);
+            object.velocityX = 0;
+
+            return true;
+
+        }
+
+        return false;
+
+    }
+
+    collidePlatformTop(object, tileTop) {
+
+        if (object.getBottom() > tileTop && object.getOldBottom() <= tileTop) {
+
+            // console.log('collide platform top');
+
+            object.setBottom(tileTop - 0.01);
+            object.velocityY = 0;
+            object.jumpCounter = 0;
+
+            return true;
+
+        }
+
+        return false;
+
+    }
+
+    collidePlatformBottom(object, tileBottom) {
+
+        if (object.getTop() > tileBottom && object.getOldTop() <= tileBottom) {
+
+            // console.log('collide platform bottom');
+
+            object.setTop(tileBottom + 0.01);
+            object.velocityY = 0;
+
+            return true;
+
+        }
+
+        return false;
 
     }
 

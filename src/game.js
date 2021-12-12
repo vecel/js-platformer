@@ -73,7 +73,7 @@ Game.Rectangle = class {
 
 Game.Player = class extends Game.Rectangle {
     constructor() {
-        super(32, 32, 16, 16); // initial player values
+        super(32, 32, 12, 12); // initial player values
 
         this.color       = '#f00';
         this.velocity    = 3;
@@ -204,34 +204,27 @@ Game.World = class {
 
         }
 
-        /**
-         * left, right, top, bottom are computed correctly
-         */
         let left, right, top, bottom, collisionValue;
 
         left            = Math.floor((object.getLeft() - this.offsetX) / this.tileSize);
         top             = Math.floor((object.getTop() - this.offsetY) / this.tileSize);
         collisionValue  = this.collisionMap[top * this.columns + left];
-
-        // this.collider.collide(collisionValue, object, left * this.tileSize + this.offsetX, top * this.tileSize + this.offsetY, this.tileSize);
+        this.collider.collide(collisionValue, object, left * this.tileSize, top * this.tileSize, this.tileSize, this.offsetX, this.offsetY);
 
         right           = Math.floor((object.getRight() - this.offsetX) / this.tileSize);
         top             = Math.floor((object.getTop() - this.offsetY) / this.tileSize);
         collisionValue  = this.collisionMap[top * this.columns + right];
-
-        // this.collider.collide(collisionValue, object, right * this.tileSize + this.offsetX, top * this.tileSize + this.offsetY, this.tileSize);
+        this.collider.collide(collisionValue, object, right * this.tileSize, top * this.tileSize, this.tileSize, this.offsetX, this.offsetY);
 
         left            = Math.floor((object.getLeft() - this.offsetX) / this.tileSize);
         bottom          = Math.floor((object.getBottom() - this.offsetY) / this.tileSize);
         collisionValue  = this.collisionMap[bottom * this.columns + left];
-
-        // this.collider.collide(collisionValue, object, left * this.tileSize + this.offsetX, (bottom - 1) * this.tileSize + this.offsetY, this.tileSize);
+        this.collider.collide(collisionValue, object, left * this.tileSize, bottom * this.tileSize, this.tileSize, this.offsetX, this.offsetY);
 
         right           = Math.floor((object.getRight() - this.offsetX) / this.tileSize);
         bottom          = Math.floor((object.getBottom() - this.offsetY) / this.tileSize);
         collisionValue  = this.collisionMap[bottom * this.columns + right];
-
-        // this.collider.collide(collisionValue, object, right * this.tileSize + this.offsetX, (bottom - 1) * this.tileSize + this.offsetY, this.tileSize);
+        this.collider.collide(collisionValue, object, right * this.tileSize, bottom * this.tileSize, this.tileSize, this.offsetX, this.offsetY);
 
     }
 
@@ -263,14 +256,37 @@ Game.World.Collider = class {
 
     }
 
-    collide(collisionValue, object, tileX, tileY, tileSize) {
+    collide(collisionValue, object, tileX, tileY, tileSize, offsetX, offsetY) {
+
+        /**
+         * 12.12.2021 Mateusz Karandys
+         * 
+         * When player is standing on top of a block collidePlatformTop returns true in every iteration, therefore
+         * no more collision is detected. When player has the same size as tiles collidePlatformBottom can't be called
+         * in configuration: collidePlatformTop, collidePlatformLeft/Right, collidePlatformBottom, so player can jump 
+         * over the ceiling
+         * 
+         * Don't know how to make it works, when player and tiles are the same size, collision checking order isn't enough
+         * (or is it?)
+         * 
+         * For the moment keep player smaller than tiles
+         * 
+         * Idea #1: in collidePlatfrom functions add or subtract 0.01 from tile coordinates, so collision is checked above tileTop,
+         * under tileBottom, on the right of tileRight or on the left of tileLeft, example:
+         * 
+         *      this.collidePlatformTop(object, tileY + offsetY - 0.01)
+         * 
+         * +/- 0.01 can be take into account inside collidePlatform functions, not as a parameter
+         */
 
         switch (collisionValue) {
 
-            case 1: if (this.collidePlatformTop(object, tileY)) return;
-                    if (this.collidePlatformLeft(object, tileX)) return;
-                    if (this.collidePlatformRight(object, tileX + tileSize)) return;
-                    this.collidePlatformBottom(object, tileY + tileSize); break;
+            case 1: 
+                    if (this.collidePlatformTop(object, tileY + offsetY - 0.01)) return;
+                    if (this.collidePlatformLeft(object, tileX + offsetX - 0.01)) return;
+                    if (this.collidePlatformRight(object, tileX + tileSize + offsetX + 0.01)) return;
+                    if (this.collidePlatformBottom(object, tileY + tileSize + offsetY + 0.01)) return;;
+                    break;
 
         }
 
@@ -278,9 +294,7 @@ Game.World.Collider = class {
 
     collidePlatformLeft(object, tileLeft) {
 
-        if (object.getRight() > tileLeft && object.getOldLeft() <= tileLeft) {
-
-            // console.log('collide platform left');
+        if (object.getRight() > tileLeft && object.getOldRight() <= tileLeft) {
 
             object.setRight(tileLeft - 0.01);
             object.velocityX = 0;
@@ -295,9 +309,7 @@ Game.World.Collider = class {
 
     collidePlatformRight(object, tileRight) {
 
-        if (object.getLeft() < tileRight && object.getOldRight() >= tileRight) {
-
-            // console.log('collide platform right');
+        if (object.getLeft() < tileRight && object.getOldLeft() >= tileRight) {
 
             object.setLeft(tileRight + 0.01);
             object.velocityX = 0;
@@ -314,8 +326,6 @@ Game.World.Collider = class {
 
         if (object.getBottom() > tileTop && object.getOldBottom() <= tileTop) {
 
-            // console.log('collide platform top');
-
             object.setBottom(tileTop - 0.01);
             object.velocityY = 0;
             object.jumpCounter = 0;
@@ -330,11 +340,9 @@ Game.World.Collider = class {
 
     collidePlatformBottom(object, tileBottom) {
 
-        if (object.getTop() > tileBottom && object.getOldTop() <= tileBottom) {
+        if (object.getTop() < tileBottom && object.getOldTop() >= tileBottom) {
 
-            // console.log('collide platform bottom');
-
-            object.setTop(tileBottom + 0.01);
+            object.setTop(tileBottom);
             object.velocityY = 0;
 
             return true;
@@ -344,7 +352,6 @@ Game.World.Collider = class {
         return false;
 
     }
-
 }
 
 export default Game;

@@ -119,22 +119,50 @@ Game.Player = class extends Game.Rectangle {
 Game.World = class {
     constructor(levelId) {
 
-        this.mapSketch = ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X',
-                    'X', '.', '.', '.', 'X', '.', '.', 'X',
-                    '.', '.', '.', 'X', '.', '.', '.', 'X',
-                    'X', '.', '.', '.', 'X', 'X', '.', 'X',
-                    'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'];
+        this.mapSketch = [
+                    'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X',
+                    'X', '.', '.', '.', 'X', '.', '.', '.', '.', '.', 'X', 'X', 'X', 'X', '.', '.', 'X', 'X',
+                    'X', '.', '.', 'X', 'X', '.', 'X', '.', '.', '.', 'X', 'X', 'X', '.', '.', '.', '.', 'X',
+                    'X', '.', 'X', 'X', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'X', '.', '.', '.', 'X',
+                    'X', '.', '.', '.', '.', '.', '.', '.', 'X', '.', '.', '.', '.', '.', '.', 'X', '.', 'X',
+                    'X', '.', '.', '.', '.', '.', '.', '.', 'X', '.', '.', '.', '.', '.', '.', '.', '.', 'X',
+                    'X', 'X', '.', '.', 'X', 'X', '.', '.', 'X', 'X', '.', '.', 'X', '.', '.', 'X', '.', 'X',
+                    'X', 'X', '.', '.', 'X', '.', '.', '.', 'X', '.', '.', '.', '.', '.', 'X', 'X', '.', 'X',
+                    'X', 'X', '.', 'X', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'X', 'X', '.', 'X',
+                    'X', '.', '.', 'X', '.', '.', '.', '.', '.', '.', '.', 'X', '.', '.', '.', 'X', '.', 'X',
+                    'X', '.', '.', 'X', 'X', '.', 'X', 'X', 'X', '.', '.', 'X', '.', '.', '.', 'X', '.', 'X',
+                    'X', '.', '.', 'X', 'X', '.', '.', 'X', '.', '.', 'X', 'X', '.', '.', 'X', 'X', '.', 'X',
+                    'X', 'X', '.', '.', '.', '.', '.', 'X', '.', '.', 'X', 'X', 'X', '.', 'X', 'X', '.', 'X',
+                    'X', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'X', 'X', '.', '.', 'X', '.', 'X',
+                    'X', '.', '.', 'X', 'X', '.', '.', '.', '.', '.', '.', 'X', 'X', '.', '.', '.', '.', 'X',
+                    'X', '.', '.', '.', '.', '.', 'X', '.', '.', '.', '.', 'X', 'X', '.', '.', 'X', '.', 'X',
+                    'X', '.', '.', '.', '.', '.', '.', '.', '.', '.', 'X', 'X', 'X', 'X', '.', 'X', '.', 'X',
+                    'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'];
 
-        this.collisionMap = [1, 1, 1, 1, 1, 1, 1, 1,
-                            1, 0, 0, 0, 1, 0, 0, 1,
-                            0, 0, 0, 1, 0, 0, 0, 1,
-                            1, 0, 0, 0, 1, 1, 0, 1,
-                            1, 1, 1, 1, 1, 1, 1, 1];
+        this.collisionMap = [
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                    1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1,
+                    1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1,
+                    1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1,
+                    1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1,
+                    1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+                    1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1,
+                    1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1,
+                    1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1,
+                    1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1,
+                    1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1,
+                    1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1,
+                    1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1,
+                    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1,
+                    1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1,
+                    1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1,
+                    1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1,
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
         this.collider = new Game.World.Collider();
         
-        this.columns    = 8;
-        this.rows       = 5;
+        this.columns    = 18;
+        this.rows       = 18;
         this.tileSize  = 16;
 
         this.map = [];
@@ -147,8 +175,8 @@ Game.World = class {
         this.offsetX = 0;
         this.offsetY = 0;
 
-        this.width  = this.columns * this.tileSize;
-        this.height = this.rows * this.tileSize;
+        this.width  = 128;
+        this.height = 80;
 
     }
 
@@ -168,6 +196,29 @@ Game.World = class {
     }
 
     collideObject(object) {
+
+        let left, right, top, bottom, collisionValue;
+
+        left            = Math.floor((object.getLeft() - this.offsetX) / this.tileSize);
+        top             = Math.floor((object.getTop() - this.offsetY) / this.tileSize);
+        collisionValue  = this.collisionMap[top * this.columns + left];
+        this.collider.collide(collisionValue, object, left * this.tileSize, top * this.tileSize, this.tileSize, this.offsetX, this.offsetY);
+
+        right           = Math.floor((object.getRight() - this.offsetX) / this.tileSize);
+        top             = Math.floor((object.getTop() - this.offsetY) / this.tileSize);
+        collisionValue  = this.collisionMap[top * this.columns + right];
+        this.collider.collide(collisionValue, object, right * this.tileSize, top * this.tileSize, this.tileSize, this.offsetX, this.offsetY);
+
+        left            = Math.floor((object.getLeft() - this.offsetX) / this.tileSize);
+        bottom          = Math.floor((object.getBottom() - this.offsetY) / this.tileSize);
+        collisionValue  = this.collisionMap[bottom * this.columns + left];
+        this.collider.collide(collisionValue, object, left * this.tileSize, bottom * this.tileSize, this.tileSize, this.offsetX, this.offsetY);
+
+        right           = Math.floor((object.getRight() - this.offsetX) / this.tileSize);
+        bottom          = Math.floor((object.getBottom() - this.offsetY) / this.tileSize);
+        collisionValue  = this.collisionMap[bottom * this.columns + right];
+        this.collider.collide(collisionValue, object, right * this.tileSize, bottom * this.tileSize, this.tileSize, this.offsetX, this.offsetY);
+
 
         /**
              * object's velocityX is rounded so that tile map is moving smoothly,
@@ -193,39 +244,18 @@ Game.World = class {
         
             this.offsetY += Math.round(-object.velocityY);
             object.setTop(0);
+
+        }
+        if (object.getBottom() > this.height) { 
+          
+            this.offsetY += Math.round(-object.velocityY);
+            object.setBottom(this.height);
+            object.jumpCounter = 0; // should not be here
             object.velocityY = 0;
 
         }
-        if (object.getBottom() > this.height - 0) { 
-            
-            object.setBottom(this.height - 0.01);
-            object.jumpCounter = 0; 
-            object.velocityY = 0;
 
-        }
-
-        let left, right, top, bottom, collisionValue;
-
-        left            = Math.floor((object.getLeft() - this.offsetX) / this.tileSize);
-        top             = Math.floor((object.getTop() - this.offsetY) / this.tileSize);
-        collisionValue  = this.collisionMap[top * this.columns + left];
-        this.collider.collide(collisionValue, object, left * this.tileSize, top * this.tileSize, this.tileSize, this.offsetX, this.offsetY);
-
-        right           = Math.floor((object.getRight() - this.offsetX) / this.tileSize);
-        top             = Math.floor((object.getTop() - this.offsetY) / this.tileSize);
-        collisionValue  = this.collisionMap[top * this.columns + right];
-        this.collider.collide(collisionValue, object, right * this.tileSize, top * this.tileSize, this.tileSize, this.offsetX, this.offsetY);
-
-        left            = Math.floor((object.getLeft() - this.offsetX) / this.tileSize);
-        bottom          = Math.floor((object.getBottom() - this.offsetY) / this.tileSize);
-        collisionValue  = this.collisionMap[bottom * this.columns + left];
-        this.collider.collide(collisionValue, object, left * this.tileSize, bottom * this.tileSize, this.tileSize, this.offsetX, this.offsetY);
-
-        right           = Math.floor((object.getRight() - this.offsetX) / this.tileSize);
-        bottom          = Math.floor((object.getBottom() - this.offsetY) / this.tileSize);
-        collisionValue  = this.collisionMap[bottom * this.columns + right];
-        this.collider.collide(collisionValue, object, right * this.tileSize, bottom * this.tileSize, this.tileSize, this.offsetX, this.offsetY);
-
+        
     }
 
     update() {

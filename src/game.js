@@ -73,7 +73,7 @@ Game.Rectangle = class {
 
 Game.Player = class extends Game.Rectangle {
     constructor() {
-        super(32, 32, 12, 12); // initial player values
+        super(32, 32, 5, 5); // initial player values
 
         this.color       = '#f00';
         this.velocity    = 3;
@@ -163,7 +163,7 @@ Game.World = class {
         
         this.columns    = 18;
         this.rows       = 18;
-        this.tileSize  = 16;
+        this.tileSize  = 8;
 
         this.map = [];
 
@@ -175,8 +175,8 @@ Game.World = class {
         this.offsetX = 0;
         this.offsetY = 0;
 
-        this.width  = 128;
-        this.height = 80;
+        this.width  = 128;  // game screen
+        this.height = 80;   // game screen
 
     }
 
@@ -196,6 +196,13 @@ Game.World = class {
     }
 
     collideObject(object) {
+
+        /**
+         * 14.12.2021
+         * Collisions with tiles must be checked before collisions with world boundries,
+         * because collision with world border might place player inside a tile, so that
+         * collision type will not be detected and player could move outside the wolrd 
+         */
 
         let left, right, top, bottom, collisionValue;
 
@@ -224,46 +231,48 @@ Game.World = class {
              * object's velocityX is rounded so that tile map is moving smoothly,
              * otherwise tiles move by nondecimal values and then graphics isn't
              * rendered in solid color, but it has stripes in different color
+             * 
+             * 14.12.2021
+             * Changed collision with boundries detection, however tiles are not now
+             * rendered smoothly 
         */
 
-        if (object.getLeft() < 0) { 
+        if (object.getLeft() < this.tileSize) {
 
-            this.offsetX += Math.round(-object.velocityX);
-            object.setLeft(0);
-            object.velocityX = 0;
-
-        }
-        if (object.getRight() > this.width) { 
-
-            this.offsetX += Math.round(-object.velocityX);
-            object.setRight(this.width);
-            object.velocityX = 0;
+            this.offsetX += this.tileSize - object.getLeft();
+            object.setLeft(this.tileSize);
 
         }
-        if (object.getTop() < 0) { 
+        if (object.getRight() > this.width - this.tileSize) { 
+
+            this.offsetX += -this.tileSize + this.width - object.getRight();
+            object.setRight(this.width - this.tileSize);
+
+        }
+        if (object.getTop() < this.tileSize) { 
         
-            this.offsetY += Math.round(-object.velocityY);
-            object.setTop(0);
+            this.offsetY += this.tileSize - object.getTop();
+            object.setTop(this.tileSize);
 
         }
-        if (object.getBottom() > this.height) { 
+        if (object.getBottom() > this.height - this.tileSize) { 
           
-            this.offsetY += Math.round(-object.velocityY);
-            object.setBottom(this.height);
-            object.jumpCounter = 0; // should not be here
-            object.velocityY = 0;
+            this.offsetY += -this.tileSize + this.height - object.getBottom();
+            object.setBottom(this.height - this.tileSize);
 
         }
 
-        
     }
 
     update() {
 
         this.player.velocityY += this.gravity;
         this.player.velocityX *= this.friction;
-        this.player.update();
 
+        this.player.velocityY = Math.min(this.player.velocityY, this.tileSize);
+
+        this.player.update();
+        
         this.collideObject(this.player);        
 
     }

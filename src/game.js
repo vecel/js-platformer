@@ -73,10 +73,10 @@ Game.Rectangle = class {
 
 Game.Player = class extends Game.Rectangle {
     constructor() {
-        super(32, 32, 5, 5); // initial player values
+        super(32, 32, 8, 8); // initial player values
 
         this.color       = '#f00';
-        this.velocity    = 3;
+        this.velocity    = 2;
 
         this.jumpCounter = 0;
         this.velocityX   = 0;
@@ -88,7 +88,7 @@ Game.Player = class extends Game.Rectangle {
 
         if (this.jumpCounter == 2) return;
 
-        this.velocityY = -15;
+        this.velocityY = -6;
         this.jumpCounter++;
 
     }
@@ -104,6 +104,15 @@ Game.Player = class extends Game.Rectangle {
         this.velocityX = this.velocity;
 
     }
+
+    getVelocityX() { return this.velocityX; }
+    getVelocityY() { return this.velocityY; }
+    
+    setVelocityX(velocity) { this.velocityX = velocity; }
+    setVelocityY(velocity) { this.velocityY = velocity; }
+
+    getJumpConter() { return this.jumpCounter; }
+    setJumpCounter(jumpsDone) { this.jumpCounter = jumpsDone; }
 
     update() {
 
@@ -163,13 +172,13 @@ Game.World = class {
         
         this.columns    = 18;
         this.rows       = 18;
-        this.tileSize  = 8;
+        this.tileSize  = 10;
 
         this.map = [];
 
         this.player = new Game.Player();
 
-        this.gravity = 3;
+        this.gravity = 1;
         this.friction = 0.7;
 
         this.offsetX = 0;
@@ -269,7 +278,8 @@ Game.World = class {
         this.player.velocityY += this.gravity;
         this.player.velocityX *= this.friction;
 
-        this.player.velocityY = Math.min(this.player.velocityY, this.tileSize);
+        this.player.setVelocityY(Math.min(this.player.getVelocityY(), this.tileSize));
+        // #Bug(1): velocityY can be less than tileSize (negative value) and cause tunneling
 
         this.player.update();
         
@@ -289,11 +299,6 @@ Game.Tile = class extends Game.Rectangle {
 }
 
 Game.World.Collider = class {
-    constructor() {
-
-
-
-    }
 
     collide(collisionValue, object, tileX, tileY, tileSize, offsetX, offsetY) {
 
@@ -336,7 +341,9 @@ Game.World.Collider = class {
         if (object.getRight() > tileLeft && object.getOldRight() <= tileLeft) {
 
             object.setRight(tileLeft - 0.01);
-            object.velocityX = 0;
+            object.setVelocityX(0);
+            object.setVelocityY(Math.min(0.5, object.getVelocityY()));
+            // object.setJumpCounter(Math.min(object.getJumpConter(), 1));
             
             return true;
 
@@ -351,7 +358,9 @@ Game.World.Collider = class {
         if (object.getLeft() < tileRight && object.getOldLeft() >= tileRight) {
 
             object.setLeft(tileRight + 0.01);
-            object.velocityX = 0;
+            object.setVelocityX(0);
+            object.setVelocityY(Math.min(0.5, object.getVelocityY()));
+            // object.setJumpCounter(Math.min(object.getJumpConter(), 1));
 
             return true;
 
@@ -366,8 +375,8 @@ Game.World.Collider = class {
         if (object.getBottom() > tileTop && object.getOldBottom() <= tileTop) {
 
             object.setBottom(tileTop - 0.01);
-            object.velocityY = 0;
-            object.jumpCounter = 0;
+            object.setVelocityY(0);
+            object.setJumpCounter(0);
 
             return true;
 
@@ -381,8 +390,8 @@ Game.World.Collider = class {
 
         if (object.getTop() < tileBottom && object.getOldTop() >= tileBottom) {
 
-            object.setTop(tileBottom);
-            object.velocityY = 0;
+            object.setTop(tileBottom + 0.01);
+            object.setVelocityY(0);
 
             return true;
 

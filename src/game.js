@@ -82,11 +82,16 @@ Game.Player = class extends Game.Rectangle {
         this.velocityX   = 0;
         this.velocityY   = 0;
 
+        this.stickyLeft  = false;
+        this.stickyRight = false;
     }
 
     jump() {
 
         if (this.jumpCounter == 2) return;
+
+        if (this.stickyLeft)  this.velocityX = 10;
+        if (this.stickyRight) this.velocityX = -10;
 
         this.velocityY = -6;
         this.jumpCounter++;
@@ -121,6 +126,9 @@ Game.Player = class extends Game.Rectangle {
 
         this.x += this.velocityX;
         this.y += this.velocityY;
+
+        this.stickyLeft  = false;
+        this.stickyRight = false;
 
     }
 }
@@ -343,7 +351,9 @@ Game.World.Collider = class {
             object.setRight(tileLeft - 0.01);
             object.setVelocityX(0);
             object.setVelocityY(Math.min(0.5, object.getVelocityY()));
-            // object.setJumpCounter(Math.min(object.getJumpConter(), 1));
+            
+            object.setJumpCounter(Math.min(object.getJumpConter(), 1));
+            object.stickyRight = true;
             
             return true;
 
@@ -360,7 +370,9 @@ Game.World.Collider = class {
             object.setLeft(tileRight + 0.01);
             object.setVelocityX(0);
             object.setVelocityY(Math.min(0.5, object.getVelocityY()));
-            // object.setJumpCounter(Math.min(object.getJumpConter(), 1));
+
+            object.setJumpCounter(Math.min(object.getJumpConter(), 1));
+            object.stickyLeft = true;
 
             return true;
 
